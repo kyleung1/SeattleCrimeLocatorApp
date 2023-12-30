@@ -1,6 +1,8 @@
 import { View, Text } from "react-native";
+import Mapbox from "./mapbox";
 
 const Landing = () => {
+  // console.log(process.env.REACT_APP_MAPBOXKEY);
   return (
     <View style={{ alignItems: "center" }}>
       <Text
@@ -25,7 +27,9 @@ const Landing = () => {
           alignItems: "center",
           marginVertical: 20,
         }}
-      ></View>
+      >
+        <Mapbox />
+      </View>
     </View>
   );
 };

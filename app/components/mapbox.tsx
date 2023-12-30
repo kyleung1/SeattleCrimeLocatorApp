@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import mapboxgl from "@rnmapbox/maps";
+import { StyleSheet, View } from "react-native";
+import { MAPBOXKEY } from "@env";
 
 type coordinates = [number, number];
 
@@ -6,8 +9,9 @@ const Mapbox = (props) => {
   const [currentLocation, setStart] = useState<coordinates>([
     -122.3328, 47.6061,
   ]);
+  console.log(MAPBOXKEY);
+  mapboxgl.setAccessToken(MAPBOXKEY);
 
-  //   mapboxgl.accessToken = process.env.REACT_APP_MAPBOXKEY;
   //   console.log(process.env.REACT_APP_MAPBOXKEY);
   //   useEffect(() => {
   //     const map = new mapboxgl.Map({
@@ -23,15 +27,27 @@ const Mapbox = (props) => {
   //     });
   //   });
   return (
-    <div className="App">
-      {/* <head>
-      <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
-    </head> */}
-      <div className="center map-container">
-        <div id="map"></div>
-      </div>
-    </div>
+    <View style={styles.page}>
+      <View style={styles.mapContainer}>
+        <mapboxgl.MapView style={styles.map} />
+      </View>
+    </View>
   );
 };
 
 export default Mapbox;
+
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mapContainer: {
+    height: 300,
+    width: 300,
+  },
+  map: {
+    flex: 1,
+  },
+});
