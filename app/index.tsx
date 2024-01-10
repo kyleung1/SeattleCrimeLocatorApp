@@ -1,6 +1,7 @@
 import { Stack, useRouter } from "expo-router";
 import { View, Text, ScrollView, SafeAreaView } from "react-native";
 import Landing from "./components/landing";
+import { useEffect } from "react";
 
 const Home = () => {
   const router = useRouter();

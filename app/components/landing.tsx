@@ -1,8 +1,8 @@
 import { View, Text } from "react-native";
 import Mapbox from "./mapbox";
+import React from "react";
 
 const Landing = () => {
-  // console.log(process.env.REACT_APP_MAPBOXKEY);
   return (
     <View style={{ alignItems: "center" }}>
       <Text
@@ -13,17 +13,14 @@ const Landing = () => {
           marginVertical: 10,
         }}
       >
-        Find the most recent crime near you
+        100 most recent crimes near you
       </Text>
       <Text style={{ fontWeight: "bold", fontSize: 15, textAlign: "center" }}>
         Seattle, Washington
       </Text>
       <View
         style={{
-          backgroundColor: "lightgreen",
-          width: "80%",
-          padding: 20,
-          borderRadius: 6,
+          width: "100%",
           alignItems: "center",
           marginVertical: 20,
         }}
