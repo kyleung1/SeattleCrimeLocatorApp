@@ -16,11 +16,23 @@ const Home = () => {
         }}
       />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
         <View style={{ flex: 1 }}>
           <Landing />
         </View>
-      </ScrollView>
+        <View style={{ backgroundColor: "white", height: 50 }}>
+          {/* Your navbar content goes here */}
+        </View>
+      </View>
+
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 };

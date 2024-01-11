@@ -6,6 +6,17 @@
     },
     "plugins": ["expo-router"],
     "name": "SeattleCrimeLocatorApp",
-    "slug": "SeattleCrimeLocatorApp"
+    "slug": "SeattleCrimeLocatorApp",
+    "ios": {
+      "requireFullScreen": true
+    },
+    "plugins": [
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "PORTRAIT"
+        }
+      ]
+    ]
   }
 }
