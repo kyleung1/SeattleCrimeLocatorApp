@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import Mapbox from "./mapbox";
+import Map from "./map";
 import React, { useEffect, useState } from "react";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { TextInput } from "react-native-gesture-handler";
@@ -54,7 +54,7 @@ const Landing = () => {
           marginVertical: 20,
         }}
       >
-        <Mapbox />
+        <Map />
       </View>
     </View>
   );
