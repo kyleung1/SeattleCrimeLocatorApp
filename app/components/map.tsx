@@ -5,6 +5,26 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
 type coordinates = [number, number];
+interface CrimeData {
+  beat: string;
+  crime_against_category: string;
+  group_a_b: string;
+  latitude: string;
+  longitude: string;
+  mcpp: string;
+  offense: string;
+  offense_code: string;
+  offense_end_datetime: string;
+  offense_id: string;
+  offense_parent_group: string;
+  offense_start_datetime: string;
+  precinct: string;
+  report_datetime: string;
+  report_number: string;
+  sector: string;
+  distance?: number;
+  _100_block_address?: string;
+}
 
 const Map = (props) => {
   const mapViewRef = useRef(null);
@@ -12,6 +32,7 @@ const Map = (props) => {
     -122.3328, 47.6061,
   ]); // lon, lat
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [dataState, setData] = useState<CrimeData[] | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -34,18 +55,20 @@ const Map = (props) => {
       const request = await fetch(
         "https://data.seattle.gov/resource/tazs-3rd5.json?$order=report_datetime%20DESC&$limit=100"
       );
-      const data = await request.json();
-      console.log(data);
-      data.foreach((incident) => {
-        let c_lon = incident.longitude;
-        let c_lat = incident.latitude;
-        incident["distance"] = distance(
-          c_lon,
-          c_lat,
-          currentLocation[0],
-          currentLocation[1]
-        );
-      });
+      const data: CrimeData[] = await request.json();
+      if (data)
+        data.forEach((incident) => {
+          let c_lon = incident.longitude;
+          let c_lat = incident.latitude;
+          incident["distance"] = distance(
+            parseFloat(c_lon),
+            parseFloat(c_lat),
+            currentLocation[0],
+            currentLocation[1]
+          );
+        });
+      setData(data);
+      console.log(dataState);
     }
     fetchCrimes();
   }, []);
@@ -98,9 +121,20 @@ const Map = (props) => {
             latitude: currentLocation[1],
             longitude: currentLocation[0],
           }}
-          title={"test"}
+          title={"Your Location"}
           description={"description"}
         />
+        {dataState?.map((marker, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: parseFloat(marker.latitude),
+              longitude: parseFloat(marker.longitude),
+            }}
+            title={marker.offense_parent_group}
+            description={marker.offense_parent_group}
+          />
+        ))}
       </MapView>
     </View>
   );
