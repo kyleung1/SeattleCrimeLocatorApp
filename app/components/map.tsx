@@ -25,8 +25,11 @@ interface CrimeData {
   distance?: number;
   _100_block_address?: string;
 }
+interface MapProps {
+  searchCoords?: coordinates;
+}
 
-const Map = (props) => {
+const Map = (MapProps: MapProps) => {
   const mapViewRef = useRef(null);
   const [currentLocation, setStart] = useState<coordinates>([
     -122.3328, 47.6061,
@@ -34,6 +37,19 @@ const Map = (props) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [dataState, setData] = useState<CrimeData[] | null>(null);
   const [localCrimes, setLC] = useState<CrimeData[] | null>([]);
+
+  useEffect(() => {
+    setStart(MapProps.searchCoords);
+    console.log(MapProps);
+  }, [MapProps]);
+
+  useEffect(() => {
+    const lat = currentLocation[1];
+    const lon = currentLocation[0];
+    mapViewRef.current.animateToRegion({ latitude: lat, longitude: lon }, 1000);
+    fetchCrimes();
+    console.log(localCrimes.length);
+  }, [currentLocation]);
 
   useEffect(() => {
     (async () => {
@@ -52,29 +68,6 @@ const Map = (props) => {
       );
     })();
 
-    async function fetchCrimes() {
-      const request = await fetch(
-        "https://data.seattle.gov/resource/tazs-3rd5.json?$order=report_datetime%20DESC&$limit=100"
-      );
-      const data: CrimeData[] = await request.json();
-      if (data)
-        data.forEach((incident) => {
-          let c_lon = incident.longitude;
-          let c_lat = incident.latitude;
-          incident["distance"] = distance(
-            parseFloat(c_lon),
-            parseFloat(c_lat),
-            currentLocation[0],
-            currentLocation[1]
-          );
-        });
-      setData(data);
-
-      dataState.forEach((crime) => {
-        if (crime.distance <= 1609.34) {
-        }
-      });
-    }
     fetchCrimes();
   }, []);
 
@@ -83,6 +76,34 @@ const Map = (props) => {
     text = errorMsg;
   } else if (location) {
     text = JSON.stringify(location);
+  }
+
+  async function fetchCrimes() {
+    const request = await fetch(
+      "https://data.seattle.gov/resource/tazs-3rd5.json?$order=report_datetime%20DESC&$limit=100"
+    );
+    const data: CrimeData[] = await request.json();
+    if (data)
+      data.forEach((incident) => {
+        let c_lon = incident.longitude;
+        let c_lat = incident.latitude;
+        incident["distance"] = distance(
+          parseFloat(c_lon),
+          parseFloat(c_lat),
+          currentLocation[0],
+          currentLocation[1]
+        );
+      });
+    setData(data);
+
+    if (dataState)
+      dataState.forEach((crime) => {
+        if (crime.distance <= 1609.34) {
+          let crimeArray: CrimeData[] = [];
+          crimeArray.push(crime);
+          setLC(crimeArray);
+        }
+      });
   }
 
   //https://www.movable-type.co.uk/scripts/latlong.html
@@ -129,7 +150,7 @@ const Map = (props) => {
           title={"Your Location"}
           description={"description"}
         />
-        {dataState?.map((marker, index) => (
+        {localCrimes?.map((marker, index) => (
           <Marker
             key={index}
             coordinate={{
@@ -137,7 +158,7 @@ const Map = (props) => {
               longitude: parseFloat(marker.longitude),
             }}
             title={marker.offense_parent_group}
-            description={marker.offense_parent_group}
+            description={marker.offense_parent_group + " " + marker.distance}
           />
         ))}
       </MapView>

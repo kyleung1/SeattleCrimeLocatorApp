@@ -4,8 +4,29 @@ import React, { useEffect, useState } from "react";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { TextInput } from "react-native-gesture-handler";
 
+type coordinates = [number, number];
+interface LocationData {
+  addresstype: string;
+  boundingbox: [string, string, string, string];
+  class: string;
+  display_name: string;
+  importance: number;
+  lat: string;
+  licence: string;
+  lon: string;
+  name: string;
+  osm_id: number;
+  osm_type: string;
+  place_id: number;
+  place_rank: number;
+  type: string;
+}
+
 const Landing = () => {
   const [searchInput, setSearch] = useState("");
+  const [searchCoords, setSC] = useState<coordinates | null>([
+    -122.3328, 47.6061,
+  ]); // lon, lat
 
   useEffect(() => {
     const lockScreenOrientation = async () => {
@@ -16,6 +37,18 @@ const Landing = () => {
 
     lockScreenOrientation();
   }, []);
+
+  async function handleSearch() {
+    const geocodeRequest = await fetch(
+      "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+        searchInput
+    );
+    const geocodeData: LocationData[] = await geocodeRequest.json();
+    if (geocodeData)
+      setSC([parseFloat(geocodeData[0].lon), parseFloat(geocodeData[0].lat)]);
+    // console.log(searchCoords);
+  }
+
   return (
     <View style={{ alignItems: "center" }}>
       <Text
@@ -26,7 +59,7 @@ const Landing = () => {
           marginVertical: 10,
         }}
       >
-        100 most recent crimes near you
+        Recent crimes within 1 mile of you
       </Text>
       <Text
         style={{
@@ -44,6 +77,8 @@ const Landing = () => {
           style={styles.input}
           placeholder="Enter Address"
           onChangeText={(value) => setSearch(value)}
+          onSubmitEditing={handleSearch}
+          returnKeyType="search"
           value={searchInput}
         />
       </View>
@@ -54,7 +89,7 @@ const Landing = () => {
           marginVertical: 20,
         }}
       >
-        <Map />
+        <Map searchCoords={searchCoords} />
       </View>
     </View>
   );
