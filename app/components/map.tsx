@@ -33,6 +33,7 @@ const Map = (props) => {
   ]); // lon, lat
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [dataState, setData] = useState<CrimeData[] | null>(null);
+  const [localCrimes, setLC] = useState<CrimeData[] | null>([]);
 
   useEffect(() => {
     (async () => {
@@ -68,7 +69,11 @@ const Map = (props) => {
           );
         });
       setData(data);
-      console.log(dataState);
+
+      dataState.forEach((crime) => {
+        if (crime.distance <= 1609.34) {
+        }
+      });
     }
     fetchCrimes();
   }, []);
